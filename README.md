@@ -1,1 +1,3 @@
-# lsgxe_re-analysis_and_meta-analysis_manuscript
+# METAGEM and REGEM Manuscript Code  
+
+Code to produce the METAGEM and REGEM benchmark simulation study.  
