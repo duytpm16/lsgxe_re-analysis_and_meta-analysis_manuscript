@@ -13,7 +13,6 @@ metagem <- metagem[!(duplicated(metagem$SNPID)|duplicated(metagem$SNPID, fromLas
 gc()
 
 metal <- as.data.frame(fread("mb_METAANALYSIS1.TBL"))
-metal <- metal %>% arrange(MarkerName)
 metal <- metal[metal$MarkerName %in% metagem$SNPID, ]
 metal <- metal[match(metagem$SNPID, metal$MarkerName),]
 metal$`P-value` <- as.numeric(metal$`P-value`)
@@ -34,12 +33,10 @@ gc()
 
 # Read in Robust
 metagem <- as.data.frame(fread("rb_metagem_results"))
-metagem <- metagem %>% arrange(SNPID)
 metagem <- metagem[!(duplicated(metagem$SNPID)|duplicated(metagem$SNPID, fromLast = TRUE)), ]
 gc()
 
 metal <- as.data.frame(fread("rb_METAANALYSIS1.TBL"))
-metal <- metal %>% arrange(MarkerName)
 metal <- metal[metal$MarkerName %in% metagem$SNPID, ]
 metal <- metal[match(metagem$SNPID, metal$MarkerName),]
 metal$`P-value` <- as.numeric(metal$`P-value`)
@@ -435,5 +432,5 @@ m <- ggplot(d, aes(x = x, y = y)) +
 
 
 
-cowplot::plot_grid(plotlist = list(a, b, c, e, f, g, h, i, j, k, l, m), nrow = 2, ncol = 6, labels = c("A", "B", "C", "D", "E", "F"), hjust = -3)
+cowplot::plot_grid(plotlist = list(a, b, c, e, f, g, h, i, j, k, l, m), nrow = 2, ncol = 6, labels = c("A", "B", "C", "D", "E", "F"), hjust = -2)
 
