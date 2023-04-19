@@ -33,7 +33,7 @@ pheno <- pheno %>%
                   age2 = age2,
                   sex  = sex) %>%
            filter(id %in% bridge$pheno_id)
-
+stopifnot(all(pheno$id == bridge$pheno_id))
 
 panukb <- panukb[match(bridge$panukb_id, panukb$id),]
 stopifnot(all(panukb$id == bridge$panukb_id))
