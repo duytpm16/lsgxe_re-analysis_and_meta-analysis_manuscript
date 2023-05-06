@@ -2,6 +2,7 @@ library(ggplot2)
 library(scattermore)
 library(data.table)
 library(dplyr)
+library(cowplot)
 
 setwd("/Users/duytp/Desktop/metagem_and_regem_manuscript_code/METAGEM-simulations/")
 
@@ -23,15 +24,145 @@ metagem <- metagem[match(metal$MarkerName, metagem$SNPID),]
 metagem$Beta_G <- metagem$Beta_G * ifelse(sign(metagem$Beta_G) != sign(metal$Effect), -1, 1)
 metagem$`Beta_G-sex` <- metagem$`Beta_G-sex` * ifelse(sign(metagem$`Beta_G-sex`) != sign(metal$IntEffect), -1, 1)
 
-fwrite(metagem, "mb_metagem_results_ordered", sep = "\t", quote = F, row.names = F)
-fwrite(metal, "mb_METAANALYSIS1_ordered.TBL", sep = "\t", quote = F, row.names = F)
+
+
+y_title <- c(expression(bold('METAL')))
+x_title <- c(expression(bold('METAGEM')))
+
+
+
+# Read in model-based results ordered
+
+# Model-based main effects----
+d <- data.frame(x = metagem$Beta_G, y = metal$Effect)
+
+a <- ggplot(d, aes(x = x, y = y)) +
+      geom_hline(yintercept = 0, linetype = "dashed") +
+      geom_vline(xintercept = 0, linetype = "dashed") +
+      geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
+      geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
+      labs(x = x_title, y = y_title) +
+      theme(panel.background = element_blank(),
+            panel.grid = element_line(linewidth = 1, color = "grey95"),
+            panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
+            axis.line = element_blank(),
+            axis.ticks = element_blank(),
+            axis.text  = element_text(size = 20, face = "bold"),
+            axis.title = element_text(size = 20),
+            plot.title = element_text(hjust = 0.5, size = 25, face = "bold")) +
+      ggtitle(expression(bold("Model-based")))
+
+
+
+# Model-based GxSex effects----
+d <- data.frame(x = metagem$`Beta_G-sex`, y = metal$IntEffect)
+
+b <- ggplot(d, aes(x = x, y = y)) +
+      geom_hline(yintercept = 0, linetype = "dashed") +
+      geom_vline(xintercept = 0, linetype = "dashed") +
+      geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
+      geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
+      labs(x = x_title, y = y_title) +
+      theme(panel.background = element_blank(),
+            panel.grid = element_line(linewidth = 1, color = "grey95"),
+            panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
+            axis.line = element_blank(),
+            axis.ticks = element_blank(),
+            axis.text  = element_text(size = 20, face = "bold"),
+            axis.title = element_text(size = 20),
+            plot.title = element_text(hjust = 0.5, size = 25, face = "bold")) +
+      ggtitle(expression(bold("Model-based")))
+
+
+
+# Model-based G std. error----
+d <- data.frame(x = metagem$SE_Beta_G, y = metal$StdErr)
+
+c <- ggplot(d, aes(x = x, y = y)) +
+        geom_hline(yintercept = 0, linetype = "dashed") +
+        geom_vline(xintercept = 0, linetype = "dashed") +
+        geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
+        geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
+        labs(x = x_title, y = y_title) +
+        theme(panel.background = element_blank(),
+              panel.grid = element_line(linewidth = 1, color = "grey95"),
+              panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
+              axis.line = element_blank(),
+              axis.ticks = element_blank(),
+              axis.text  = element_text(size = 20, face = "bold"),
+              axis.title = element_text(size = 20),
+              plot.title = element_text(hjust = 0.5, size = 25, face = "bold")) +
+        ggtitle(expression(bold("Model-based")))
+
+
+# Model-based GxSex SE----
+d <- data.frame(x = metagem$`SE_Beta_G-sex`, y = metal$IntStdErr)
+
+e <- ggplot(d, aes(x = x, y = y)) +
+        geom_hline(yintercept = 0, linetype = "dashed") +
+        geom_vline(xintercept = 0, linetype = "dashed") +
+        geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
+        geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
+        labs(x = x_title, y = y_title) +
+        theme(panel.background = element_blank(),
+              panel.grid = element_line(linewidth = 1, color = "grey95"),
+              panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
+              axis.line = element_blank(),
+              axis.ticks = element_blank(),
+              axis.text  = element_text(size = 20, face = "bold"),
+              axis.title = element_text(size = 20),
+              plot.title = element_text(hjust = 0.5, size = 25, face = "bold")) +
+        ggtitle(expression(bold("Model-based")))
+
+
+# Model-based Covariance----
+d <- data.frame(x = metagem$`Cov_Beta_G_G-sex`, y = metal$IntCov)
+
+f <- ggplot(d, aes(x = x, y = y)) +
+      geom_hline(yintercept = 0, linetype = "dashed") +
+      geom_vline(xintercept = 0, linetype = "dashed") +
+      geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
+      geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
+      labs(x = x_title, y = y_title) +
+      theme(panel.background = element_blank(),
+            panel.grid = element_line(linewidth = 1, color = "grey95"),
+            panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
+            axis.line = element_blank(),
+            axis.ticks = element_blank(),
+            axis.text  = element_text(size = 20, face = "bold"),
+            axis.title = element_text(size = 20),
+            plot.title = element_text(hjust = 0.5, size = 25, face = "bold")) +
+      ggtitle(expression(bold("Model-based")))
+
+
+
+# Model-based joint p-value----
+d <- data.frame(x = -log10(metagem$P_Value_Joint), y = -log10(metal$`P-value`))
+
+g <- ggplot(d, aes(x = x, y = y)) +
+        geom_hline(yintercept = 0, linetype = "dashed") +
+        geom_vline(xintercept = 0, linetype = "dashed") +
+        geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
+        geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
+        labs(x = x_title, y = y_title) +
+        theme(panel.background = element_blank(),
+              panel.grid = element_line(linewidth = 1, color = "grey95"),
+              panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
+              axis.line = element_blank(),
+              axis.ticks = element_blank(),
+              axis.text  = element_text(size = 20, face = "bold"),
+              axis.title = element_text(size = 20),
+              plot.title = element_text(hjust = 0.5, size = 25, face = "bold")) +
+        ggtitle(expression(bold("Model-based")))
+
+
+
+
+## Robust----
+rm(metagem, metal)
 gc()
 
-rm(metal, metagem)
-gc()
-
-
-# Read in Robust
+# Read in Robust----
 metagem <- as.data.frame(fread("rb_metagem_results"))
 metagem <- metagem[!(duplicated(metagem$SNPID)|duplicated(metagem$SNPID, fromLast = TRUE)), ]
 gc()
@@ -47,390 +178,160 @@ metagem <- metagem[match(metal$MarkerName, metagem$SNPID),]
 metagem$robust_Beta_G <- metagem$robust_Beta_G * ifelse(sign(metagem$robust_Beta_G) != sign(metal$Effect), -1, 1)
 metagem$`robust_Beta_G-sex` <- metagem$`robust_Beta_G-sex` * ifelse(sign(metagem$`robust_Beta_G-sex`) != sign(metal$IntEffect), -1, 1)
 
-fwrite(metagem, "rb_metagem_results_ordered", sep = "\t", quote = F, row.names = F)
-fwrite(metal, "rb_METAANALYSIS1_ordered.TBL", sep = "\t", quote = F, row.names = F)
-gc()
-
-rm(metal, metagem)
 
 
-
-
-# Read in model-based results ordered
-metagem <- as.data.frame(fread("mb_metagem_results_ordered"))
-metal <- as.data.frame(fread("mb_METAANALYSIS1_ordered.TBL"))
-gc()
-
-
-
-# Model-based main effects
-d <- data.frame(x = metagem$Beta_G, y = metal$Effect)
-d <- d %>% distinct(x, .keep_all = T)
-d <- d %>% distinct(y, .keep_all = T)
-d$title <- "Model-based"
-  
-y_title <- c(expression(bold('METAL')))
-x_title <- c(expression(bold('METAGEM')))
-breaks  <- c(-0.35, -0.20, -0.1, 0,  0.1, 0.20, 0.35)
-limits  <- c(-0.35, 0.35)
-  
-a <- ggplot(d, aes(x = x, y = y)) +
-      geom_hline(yintercept = 0, linetype = "dashed") +
-      geom_vline(xintercept = 0, linetype = "dashed") +
-      geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
-      geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
-      labs(x = x_title, y = y_title) +
-      scale_y_continuous(breaks = breaks, limits = limits, labels = function(x) ifelse(x == 0, "0", x)) +
-      scale_x_continuous(breaks = breaks, limits = limits, labels = function(x) ifelse(x == 0, "0", x)) +
-      theme(panel.background = element_blank(),
-            panel.grid = element_line(size = 1, color = "grey95"),
-            panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
-            axis.line = element_blank(),
-            axis.ticks = element_blank(),
-            plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-            strip.background =element_rect(fill="grey90"),
-            strip.text = element_text(size = 12, face = "bold")) +
-      facet_grid(. ~ title)
-a <- a + ggtitle(expression(bold("Main Effects")))
-
-
-
-# Model-based GxSex effects
-d <- data.frame(x = metagem$`Beta_G-sex`, y = metal$IntEffect)
-d <- d %>% distinct(x, .keep_all = T)
-d <- d %>% distinct(y, .keep_all = T)
-d$title <- "Model-based"
-
-y_title <- c(expression(bold('METAL')))
-x_title <- c(expression(bold('METAGEM')))
-breaks  <- c(-1.0, -0.60, -0.20, 0,  0.20, 0.60)
-limits  <- c(-1.0, 0.6)
-
-b <- ggplot(d, aes(x = x, y = y)) +
-      geom_hline(yintercept = 0, linetype = "dashed") +
-      geom_vline(xintercept = 0, linetype = "dashed") +
-      geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
-      geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
-      labs(x = x_title, y = y_title) +
-      scale_y_continuous(breaks = breaks, limits = limits, labels = function(x) ifelse(x == 0, "0", x)) +
-      scale_x_continuous(breaks = breaks, limits = limits, labels = function(x) ifelse(x == 0, "0", x)) +
-      theme(panel.background = element_blank(),
-            panel.grid = element_line(size = 1, color = "grey95"),
-            panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
-            axis.line = element_blank(),
-            axis.ticks = element_blank(),
-            plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-            strip.background =element_rect(fill="grey90"),
-            strip.text = element_text(size = 12, face = "bold")) +
-      facet_grid(. ~ title)
-
-b <- b + ggtitle(expression(bold("GxSex Effects")))
-
-
-
-# Model-based G std. error
-d <- data.frame(x = metagem$SE_Beta_G, y = metal$StdErr)
-d <- d %>% distinct(x, .keep_all = T)
-d <- d %>% distinct(y, .keep_all = T)
-d$title <- "Model-based"
-
-y_title <- c(expression(bold('METAL')))
-x_title <- c(expression(bold('METAGEM')))
-
-max = ymax = 200
-c <- ggplot(d, aes(x = x, y = y)) +
-        geom_hline(yintercept = 0, linetype = "dashed") +
-        geom_vline(xintercept = 0, linetype = "dashed") +
-        geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
-        geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
-        scale_y_continuous(limits = c(0, 0.4), labels = function(x) ifelse(x == 0, "0", x)) +
-        scale_x_continuous(limits = c(0, 0.4), labels = function(x) ifelse(x == 0, "0", x)) +
-        labs(x = x_title, y = y_title) +
-        theme(panel.background = element_blank(),
-              panel.grid = element_line(size = 1, color = "grey95"),
-              panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
-              axis.line = element_blank(),
-              axis.ticks = element_blank(),
-              plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-              strip.background =element_rect(fill="grey90"),
-              strip.text = element_text(size = 12, face = "bold"))  +
-        facet_grid(. ~ title)
-
-c <- c + ggtitle(expression(bold("SE of Main Effects")))
-
-
-# Model-based GxSex SE
-d <- data.frame(x = metagem$`SE_Beta_G-sex`, y = metal$IntStdErr)
-d <- d %>% distinct(x, .keep_all = T)
-d <- d %>% distinct(y, .keep_all = T)
-d$title <- "Model-based"
-
-y_title <- c(expression(bold('METAL')))
-x_title <- c(expression(bold('METAGEM')))
-
-e <- ggplot(d, aes(x = x, y = y)) +
-        geom_hline(yintercept = 0, linetype = "dashed") +
-        geom_vline(xintercept = 0, linetype = "dashed") +
-        geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
-        geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
-  scale_y_continuous(breaks = seq(0, 0.9, 0.18), limits = c(0, 0.9), labels = function(x) ifelse(x == 0, "0", x)) +
-  scale_x_continuous(breaks = seq(0, 0.9, 0.18), limits = c(0, 0.9), labels = function(x) ifelse(x == 0, "0", x)) +
-        labs(x = x_title, y = y_title) +
-        theme(panel.background = element_blank(),
-              panel.grid = element_line(size = 1, color = "grey95"),
-              panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
-              axis.line = element_blank(),
-              axis.ticks = element_blank(),
-              plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-              strip.background =element_rect(fill="grey90"),
-              strip.text = element_text(size = 12, face = "bold"))  +
-        facet_grid(. ~ title)
-e <- e + ggtitle(expression(bold("SE of GxSex Effects")))
-
-
-# Covariance
-d <- data.frame(x = metagem$`Cov_Beta_G_G-sex`, y = metal$IntCov)
-d <- d %>% distinct(x, .keep_all = T)
-d <- d %>% distinct(y, .keep_all = T)
-d$title <- "Model-based"
-
-
-y_title <- c(expression(bold('METAL')))
-x_title <- c(expression(bold('METAGEM')))
-
-f <- ggplot(d, aes(x = x, y = y)) +
-      geom_hline(yintercept = 0, linetype = "dashed") +
-      geom_vline(xintercept = 0, linetype = "dashed") +
-      geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
-      geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
-      scale_y_continuous(breaks = c(-0.1, 0,  0.1, 0.20, 0.35), limits = c(-0.1, 0.35), labels = function(x) ifelse(x == 0, "0", x)) +
-      scale_x_continuous(breaks = c(-0.1, 0,  0.1, 0.20, 0.35), limits = c(-0.1, 0.35), labels = function(x) ifelse(x == 0, "0", x)) +
-      labs(x = x_title, y = y_title) +
-      theme(panel.background = element_blank(),
-            panel.grid = element_line(size = 1, color = "grey95"),
-            panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
-            axis.line = element_blank(),
-            axis.ticks = element_blank(),
-            plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-            strip.background =element_rect(fill="grey90"),
-            strip.text = element_text(size = 12, face = "bold"))  +
-      facet_grid(. ~ title)
-f <- f + ggtitle(expression(bold("Covariances")))
-
-
-
-
-d <- data.frame(x = -log10(metagem$P_Value_Joint), y = -log10(metal$`P-value`))
-d <- d %>% distinct(x, .keep_all = T)
-d <- d %>% distinct(y, .keep_all = T)
-d$title <- "Model-based"
-
-xmax = ymax = 200
-g <- ggplot(d, aes(x = x, y = y)) +
-        geom_hline(yintercept = 0, linetype = "dashed") +
-        geom_vline(xintercept = 0, linetype = "dashed") +
-        geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
-        geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
-        scale_y_continuous(limits = c(0, ymax), labels = function(x) ifelse(x == 0, "0", x)) +
-        scale_x_continuous(limits = c(0, xmax), labels = function(x) ifelse(x == 0, "0", x)) +
-        labs(x = x_title, y = y_title) +
-        theme(panel.background = element_blank(),
-              panel.grid = element_line(size = 1, color = "grey95"),
-              panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
-              axis.line = element_blank(),
-              axis.ticks = element_blank(),
-              plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-              strip.background =element_rect(fill="grey90"),
-              strip.text = element_text(size = 12, face = "bold"))   +
-        facet_grid(. ~ title)
-
-g <- g + ggtitle(c(expression(bold('Joint -log'["10"]~'('*italic("P")*')'))))
-
-
-
-
-## Robust
-rm(metagem, metal)
-metagem <- as.data.frame(fread("rb_metagem_results_ordered"))
-metal <- as.data.frame(fread("rb_METAANALYSIS1_ordered.TBL"))
-
-
-# Robust main effects
+# Robust main effects----
 d <- data.frame(x = metagem$robust_Beta_G, y = metal$Effect)
-d <- d %>% distinct(x, .keep_all = T)
-d <- d %>% distinct(y, .keep_all = T)
-d$title <- "Robust"
-
-y_title <- c(expression(bold('METAL')))
-x_title <- c(expression(bold('METAGEM')))
-breaks  <- c(-0.35, -0.20, -0.1, 0,  0.1, 0.20, 0.35)
-limits  <- c(-0.35, 0.35)
 
 h <- ggplot(d, aes(x = x, y = y)) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_vline(xintercept = 0, linetype = "dashed") +
-  geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
-  geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
-  labs(x = x_title, y = y_title) +
-  scale_y_continuous(breaks = breaks, limits = limits, labels = function(x) ifelse(x == 0, "0", x)) +
-  scale_x_continuous(breaks = breaks, limits = limits, labels = function(x) ifelse(x == 0, "0", x)) +
-  theme(panel.background = element_blank(),
-        panel.grid = element_line(size = 1, color = "grey95"),
-        panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
-        axis.line = element_blank(),
-        axis.ticks = element_blank(),
-        plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        strip.background =element_rect(fill="grey90"),
-        strip.text = element_text(size = 12, face = "bold")) +
-  facet_grid(. ~ title)
+      geom_hline(yintercept = 0, linetype = "dashed") +
+      geom_vline(xintercept = 0, linetype = "dashed") +
+      geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
+      geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
+      labs(x = x_title, y = y_title) +
+      theme(panel.background = element_blank(),
+            panel.grid = element_line(linewidth = 1, color = "grey95"),
+            panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
+            axis.line = element_blank(),
+            axis.ticks = element_blank(),
+            axis.text  = element_text(size = 20, face = "bold"),
+            axis.title = element_text(size = 20),
+            plot.title = element_text(hjust = 0.5, size = 25, face = "bold")) +
+      ggtitle(expression(bold("Robust")))
 
 
 
-# Robust GxSex effects
+
+# Robust GxSex effects----
 d <- data.frame(x = metagem$`robust_Beta_G-sex`, y = metal$IntEffect)
-d <- d %>% distinct(x, .keep_all = T)
-d <- d %>% distinct(y, .keep_all = T)
-d$title <- "Robust"
-
-y_title <- c(expression(bold('METAL')))
-x_title <- c(expression(bold('METAGEM')))
-breaks  <- c(-1.0, -0.60, -0.20, 0,  0.20, 0.60)
-limits  <- c(-1.0, 0.6)
 
 i <- ggplot(d, aes(x = x, y = y)) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_vline(xintercept = 0, linetype = "dashed") +
-  geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
-  geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
-  labs(x = x_title, y = y_title) +
-  scale_y_continuous(breaks = breaks, limits = limits, labels = function(x) ifelse(x == 0, "0", x)) +
-  scale_x_continuous(breaks = breaks, limits = limits, labels = function(x) ifelse(x == 0, "0", x)) +
-  theme(panel.background = element_blank(),
-        panel.grid = element_line(size = 1, color = "grey95"),
-        panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
-        axis.line = element_blank(),
-        axis.ticks = element_blank(),
-        plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-        strip.background =element_rect(fill="grey90"),
-        strip.text = element_text(size = 12, face = "bold")) +
-  facet_grid(. ~ title)
+      geom_hline(yintercept = 0, linetype = "dashed") +
+      geom_vline(xintercept = 0, linetype = "dashed") +
+      geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
+      geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
+      labs(x = x_title, y = y_title) +
+      theme(panel.background = element_blank(),
+            panel.grid = element_line(linewidth = 1, color = "grey95"),
+            panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
+            axis.line = element_blank(),
+            axis.ticks = element_blank(),
+            axis.text  = element_text(size = 20, face = "bold"),
+            axis.title = element_text(size = 20),
+            plot.title = element_text(hjust = 0.5, size = 25, face = "bold")) +
+      ggtitle(expression(bold("Robust")))
 
 
 
+# Robust SE of main effects----
 d <- data.frame(x = metagem$robust_SE_Beta_G, y = metal$StdErr)
-d <- d %>% distinct(x, .keep_all = T)
-d <- d %>% distinct(y, .keep_all = T)
-d$title <- "Robust"
 
-y_title <- c(expression(bold('METAL')))
-x_title <- c(expression(bold('METAGEM')))
-
-max = ymax = 200
 j <- ggplot(d, aes(x = x, y = y)) +
         geom_hline(yintercept = 0, linetype = "dashed") +
         geom_vline(xintercept = 0, linetype = "dashed") +
         geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
         geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
-        scale_y_continuous(limits = c(0, 0.4), labels = function(x) ifelse(x == 0, "0", x)) +
-        scale_x_continuous(limits = c(0, 0.4), labels = function(x) ifelse(x == 0, "0", x)) +
         labs(x = x_title, y = y_title) +
         theme(panel.background = element_blank(),
-              panel.grid = element_line(size = 1, color = "grey95"),
+              panel.grid = element_line(linewidth = 1, color = "grey95"),
               panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
               axis.line = element_blank(),
               axis.ticks = element_blank(),
-              plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-              strip.background =element_rect(fill="grey90"),
-              strip.text = element_text(size = 12, face = "bold"))  +
-        facet_grid(. ~ title)
+              axis.text  = element_text(size = 20, face = "bold"),
+              axis.title = element_text(size = 20),
+              plot.title = element_text(hjust = 0.5, size = 25, face = "bold")) +
+        ggtitle(expression(bold("Robust")))
 
 
+# Robust SE of GxSex effects----
 d <- data.frame(x = metagem$`robust_SE_Beta_G-sex`, y = metal$IntStdErr)
-d <- d %>% distinct(x, .keep_all = T)
-d <- d %>% distinct(y, .keep_all = T)
-d$title <- "Robust"
-
-y_title <- c(expression(bold('METAL')))
-x_title <- c(expression(bold('METAGEM')))
 
 k <- ggplot(d, aes(x = x, y = y)) +
       geom_hline(yintercept = 0, linetype = "dashed") +
       geom_vline(xintercept = 0, linetype = "dashed") +
       geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
       geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
-      scale_y_continuous(breaks = seq(0, 0.9, 0.18), limits = c(0, 0.9), labels = function(x) ifelse(x == 0, "0", x)) +
-      scale_x_continuous(breaks = seq(0, 0.9, 0.18), limits = c(0, 0.9), labels = function(x) ifelse(x == 0, "0", x)) +
       labs(x = x_title, y = y_title) +
       theme(panel.background = element_blank(),
-            panel.grid = element_line(size = 1, color = "grey95"),
+            panel.grid = element_line(linewidth = 1, color = "grey95"),
             panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
             axis.line = element_blank(),
             axis.ticks = element_blank(),
-            plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-            strip.background =element_rect(fill="grey90"),
-            strip.text = element_text(size = 12, face = "bold"))  +
-      facet_grid(. ~ title)
+            axis.text  = element_text(size = 20, face = "bold"),
+            axis.title = element_text(size = 20),
+            plot.title = element_text(hjust = 0.5, size = 25, face = "bold")) +
+      ggtitle(expression(bold("Robust")))
 
 
-# Covariance
+# Robust Covariances----
 d <- data.frame(x = metagem$`robust_Cov_Beta_G_G-sex`, y = metal$IntCov)
-d <- d %>% distinct(x, .keep_all = T)
-d <- d %>% distinct(y, .keep_all = T)
-d$title <- "Robust"
-
-
-y_title <- c(expression(bold('METAL')))
-x_title <- c(expression(bold('METAGEM')))
 
 l <- ggplot(d, aes(x = x, y = y)) +
       geom_hline(yintercept = 0, linetype = "dashed") +
       geom_vline(xintercept = 0, linetype = "dashed") +
       geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
       geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
-      scale_y_continuous(breaks = c(-0.1, 0,  0.1, 0.20, 0.35), limits = c(-0.1, 0.35), labels = function(x) ifelse(x == 0, "0", x)) +
-      scale_x_continuous(breaks = c(-0.1, 0,  0.1, 0.20, 0.35), limits = c(-0.1, 0.35), labels = function(x) ifelse(x == 0, "0", x)) +
       labs(x = x_title, y = y_title) +
       theme(panel.background = element_blank(),
-            panel.grid = element_line(size = 1, color = "grey95"),
+            panel.grid = element_line(linewidth = 1, color = "grey95"),
             panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
             axis.line = element_blank(),
             axis.ticks = element_blank(),
-            plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-            strip.background =element_rect(fill="grey90"),
-            strip.text = element_text(size = 12, face = "bold"))  +
-      facet_grid(. ~ title)
+            axis.text  = element_text(size = 20, face = "bold"),
+            axis.title = element_text(size = 20),
+            plot.title = element_text(hjust = 0.5, size = 25, face = "bold")) +
+      ggtitle(expression(bold("Robust")))
 
 
-
+# Robust joint p-value----
 d <- data.frame(x = -log10(metagem$robust_P_Value_Joint), y = -log10(metal$`P-value`))
-d <- d %>% distinct(x, .keep_all = T)
-d <- d %>% distinct(y, .keep_all = T)
-d$title <- "Robust"
 
-xmax = ymax = 200
 m <- ggplot(d, aes(x = x, y = y)) +
       geom_hline(yintercept = 0, linetype = "dashed") +
       geom_vline(xintercept = 0, linetype = "dashed") +
       geom_abline(size = 1, color = "darkred", linetype = "longdash", alpha = 0.5) +
       geom_scattermore(aes(x = x, y = y), color = "black", alpha = 1, pointsize = 6) +
-      scale_y_continuous(limits = c(0, ymax), labels = function(x) ifelse(x == 0, "0", x)) +
-      scale_x_continuous(limits = c(0, xmax), labels = function(x) ifelse(x == 0, "0", x)) +
       labs(x = x_title, y = y_title) +
       theme(panel.background = element_blank(),
-            panel.grid = element_line(size = 1, color = "grey95"),
+            panel.grid = element_line(linewidth = 1, color = "grey95"),
             panel.border = element_rect(colour = "black", fill=NA, size = 1.7),
             axis.line = element_blank(),
             axis.ticks = element_blank(),
-            plot.title = element_text(hjust = 0.5, size = 13, face = "bold"),
-            strip.background =element_rect(fill="grey90"),
-            strip.text = element_text(size = 12, face = "bold"))   +
-      facet_grid(. ~ title)
+            axis.text  = element_text(size = 20, face = "bold"),
+            axis.title = element_text(size = 20),
+            plot.title = element_text(hjust = 0.5, size = 25, face = "bold")) +
+      ggtitle(expression(bold("Robust")))
+
+rm(metagem, metal)
 
 
 
+# Plot----
+t1 <- ggdraw() + draw_label("Main Effect Estimates", fontface='bold', size = 25, hjust = 0.35)
+p1 <- cowplot::plot_grid(plotlist = list(a, NULL, h), rel_heights = c(1, 0.1, 1), nrow = 3, ncol = 1, labels = c("A", ""), label_y = 1.17, label_size = 25)
 
+t2 <- ggdraw() + draw_label("G x Sex Effect Estimates", fontface='bold', size = 25, hjust = 0.35)
+p2 <- cowplot::plot_grid(plotlist = list(b, NULL, i), rel_heights = c(1, 0.1, 1), nrow = 3, ncol = 1, labels = c("B", ""), label_y = 1.17, label_size = 25)
 
+t3 <- ggdraw() + draw_label("SE of Main Effects", fontface='bold', size = 25, hjust = 0.35)
+p3 <- cowplot::plot_grid(plotlist = list(c, NULL, j), rel_heights = c(1, 0.1, 1), nrow = 3, ncol = 1, labels = c("C", ""), label_y = 1.17, label_size = 25)
 
+t4 <- ggdraw() + draw_label("SE of G x Sex Effects", fontface='bold', size = 25, hjust = 0.35)
+p4 <- cowplot::plot_grid(plotlist = list(e, NULL, k), rel_heights = c(1, 0.1, 1), nrow = 3, ncol = 1, labels = c("D", ""), label_y = 1.17, label_size = 25)
 
-cowplot::plot_grid(plotlist = list(a, b, c, e, f, g, h, i, j, k, l, m), nrow = 2, ncol = 6, labels = c("A", "B", "C", "D", "E", "F"), hjust = -2)
+t5 <- ggdraw() + draw_label("Covariances", fontface='bold', size = 25, hjust = 0.26)
+p5 <- cowplot::plot_grid(plotlist = list(f, NULL, l), rel_heights = c(1, 0.1, 1), nrow = 3, ncol = 1, labels = c("E", ""), label_y = 1.17, label_size = 25)
 
+t6 <- ggdraw() + draw_label(c(expression(bold('Joint Test -log'["10"]~'('*italic("P")*')'))), fontface='bold', size = 25, hjust = 0.4)
+p6 <- cowplot::plot_grid(plotlist = list(g, NULL, m), rel_heights = c(1, 0.1, 1), nrow = 3, ncol = 1, labels = c("F", ""), label_y = 1.17, label_size = 25)
+
+s <- plot_grid(t1, NULL, t2, NULL, t3,
+               p1, NULL, p2, NULL, p3,
+               NULL, NULL, NULL, NULL, NULL,
+               t4, NULL, t5, NULL, t6,
+               p4, NULL, p5, NULL, p6,
+               nrow = 5,
+               ncol = 5, 
+               rel_heights = c(0.1, 1, 0.1, 0.1, 1),
+               rel_widths  = c(1, 0.1, 1, 0.1, 1)) # rel_heights values control title margins
+cowplot::save_plot("test.jpg", s, base_height = 25, base_width = 20)

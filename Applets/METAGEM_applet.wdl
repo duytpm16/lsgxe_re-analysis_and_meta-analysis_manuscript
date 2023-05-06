@@ -1,4 +1,4 @@
-run_metagem {
+task run_metagem {
 	Array[File] inputfiles
 	String exposure_names
 	Int meta_option
@@ -6,10 +6,11 @@ run_metagem {
 	Int? cpu
 	Int? disk
 	Int? preemptible
+	Int? monitoring_freq = 1
 
 	command {
-		dstat -c -d -m --nocolor > system_resource_usage.log &
-		atop -x -P PRM | grep '(METAGEM)' > process_resource_usage.log &
+		dstat -c -d -m --nocolor ${monitoring_freq} > system_resource_usage.log &
+		atop -x -P PRM ${monitoring_freq} | grep '(METAGEM)' > process_resource_usage.log &
 
 		/METAGEM/METAGEM \
 			--input-files ${sep=" " inputfiles} \
@@ -19,7 +20,7 @@ run_metagem {
 	}
 
 	runtime {
-		docker: "quay.io/large-scale-gxe-methods/metagem-workflow:latest"
+		docker: "dx://project-FyJ05zQ06y16kP7b5vQZXZvP:file-GV4XXY006y1P97JgK5xY5gY4"
 		memory: "${memory} GB"
 		cpu: "${cpu}"
 		disks: "local-disk ${disk} HDD"

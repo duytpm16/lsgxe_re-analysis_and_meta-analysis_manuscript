@@ -1,71 +1,27 @@
 #!/bin/bash
-dx mkdir "/METAGEM-METAL-Comparisons/2-Exposures/GEM/combined"
 
-for i in {1..22}
+sets=("100k_1" "50k_1" "50k_2" "10k_1" "10k_2" "10k_3" "10k_4" "10k_5" "10k_6" "10k_7" "Xk_1")
+
+dx mkdir "/METAGEM-METAL-Comparisons/2-Exposures/v2/GEM/combined"
+
+for j in "${sets[@]}"
 do
-	dx cd "/METAGEM-METAL-Comparisons/2-Exposures/GEM/100k_1/Chr${i}"
-	dx mv "gem_res" "ukb_chr${i}_100k_1_sexE_bmiE.out"
-	dx download "ukb_chr${i}_100k_1_sexE_bmiE.out"
-	if [[ $i -gt 1 ]]
-  	then
-		tail -n +2 "ukb_chr${i}_100k_1_sexE_bmiE.out" >> "ukb_100k_1_sexE_bmiE.out"
-  	else
-  		cat "ukb_chr${i}_100k_1_sexE_bmiE.out" >> "ukb_100k_1_sexE_bmiE.out"
-	fi
-done
-dx cd "/METAGEM-METAL-Comparisons/2-Exposures/GEM/combined"
-dx upload "ukb_100k_1_sexE_bmiE.out"
-
-
-for i in {1..22}
-do
-	dx cd "/METAGEM-METAL-Comparisons/2-Exposures/GEM/Xk_1/Chr${i}"
-	dx mv "gem_res" "ukb_chr${i}_Xk_1_sexE_bmiE.out"
-	dx download "ukb_chr${i}_Xk_1_sexE_bmiE.out"
-	if [[ $i -gt 1 ]]
-	then
-		tail -n +2 "ukb_chr${i}_Xk_1_sexE_bmiE.out" >> "ukb_Xk_1_sexE_bmiE.out"
-	else
-		cat "ukb_chr${i}_Xk_1_sexE_bmiE.out" >> "ukb_Xk_1_sexE_bmiE.out"
-	fi
-done
-dx cd "/METAGEM-METAL-Comparisons/2-Exposures/GEM/combined"
-dx upload "ukb_Xk_1_sexE_bmiE.out"
-
-
-for j in {1..2}
-do
-	for i in {1..22}
+	for i in {1..22} # Chromosomes
 	do
-		dx cd "/METAGEM-METAL-Comparisons/2-Exposures/GEM/50k_${j}/Chr${i}"
-		dx mv "gem_res" "ukb_chr${i}_50k_${j}_sexE_bmiE.out"
-		dx download "ukb_chr${i}_50k_${j}_sexE_bmiE.out"
+		dx cd "/METAGEM-METAL-Comparisons/2-Exposures/v2/GEM/${j}/Chr${i}"
+		dx mv "gem_res" "gem_${j}_chr${i}.out"
+		dx download "gem_${j}_chr${i}.out"
+
 		if [[ $i -gt 1 ]]
 		then
-			tail -n +2 "ukb_chr${i}_50k_${j}_sexE_bmiE.out" >> "ukb_50k_${j}_sexE_bmiE.out"
-		else	
-			cat "ukb_chr${i}_50k_${j}_sexE_bmiE.out" >> "ukb_50k_${j}_sexE_bmiE.out"			
-		fi
-	done
-       dx cd "/METAGEM-METAL-Comparisons/2-Exposures/GEM/combined"
-	dx upload "ukb_50k_${j}_sexE_bmiE.out"
-done
-
-
-for j in {1..7}
-do
-	for i in {1..22}
-	do
-		dx cd "/METAGEM-METAL-Comparisons/2-Exposures/GEM/10k_${j}/Chr${i}"
-		dx mv "gem_res" "ukb_chr${i}_10k_${j}_sexE_bmiE.out"
-		dx download "ukb_chr${i}_10k_${j}_sexE_bmiE.out"
-		if [[ $i -gt 1 ]]
-		then
-			tail -n +2 "ukb_chr${i}_10k_${j}_sexE_bmiE.out" >> "ukb_10k_${j}_sexE_bmiE.out"		
+			tail -n +3 "gem_${j}_chr${i}.out" >> "gem_${j}_2e_combined.out"
 		else
-			cat "ukb_chr${i}_10k_${j}_sexE_bmiE.out" >> "ukb_10k_${j}_sexE_bmiE.out"
+			cat "gem_${j}_chr${i}.out" >> "gem_${j}_2e_combined.out"
 		fi
+
+		rm "gem_${j}_chr${i}.out"
 	done
-       dx cd "/METAGEM-METAL-Comparisons/2-Exposures/GEM/combined"
-	dx upload "ukb_10k_${j}_sexE_bmiE.out"
+
+	dx cd "/METAGEM-METAL-Comparisons/2-Exposures/v2/GEM/combined"
+	dx upload "gem_${j}_2e_combined.out"
 done

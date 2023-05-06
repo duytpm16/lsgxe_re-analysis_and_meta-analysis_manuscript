@@ -5,8 +5,8 @@ task run_metal_robust {
 	Int? disk
 	Int? preemptible
 	command {
-		dstat -c -d -m --nocolor > system_resource_usage.log &
-		atop -x -P PRM | grep '(metal)' > process_resource_usage.log &
+		dstat -c -d -m --nocolor > metal_system_resource_usage.log &
+		atop -x -P PRM | grep '(metal)' > metal_process_resource_usage.log &
 		
 		for c in ${sep=" " inputfiles}
 		do 
@@ -27,10 +27,10 @@ PROCESS "$c"
 		done
 		echo "ANALYZE" >> metal_file
 		
-		/metal-workflow/executables/metal metal_file
+		/metal/executables/metal metal_file
 	}
 	runtime {
-		docker: "dx://file-G935Kzj06y173kpZK7f7yvq6"
+		docker: "dx://project-FyJ05zQ06y16kP7b5vQZXZvP:file-GV9BKyj06y13y8z6q3Pf9bvG"
 		memory: "${memory} GB"
 		cpu: "${cpu}"
 		disks: "local-disk ${disk} HDD"
